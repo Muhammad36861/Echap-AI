@@ -48,8 +48,10 @@
 
         /* Style for the info box to be easily visible */
         .info-box {
-            background-color: #e0f2fe; /* Light blue */
-            border-left: 4px solid #0284c7; /* Darker blue border */
+            background-color: #e0f2fe;
+            /* Light blue */
+            border-left: 4px solid #0284c7;
+            /* Darker blue border */
             color: #0c4a6e;
         }
     </style>
@@ -63,7 +65,7 @@
             <svg class="w-10 h-10 mr-4 text-white" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 11-2 0v2H7a1 1 110 2h2v2a1 1 110 2h2a1 1 110-2v-2h2a1 1 110-2h-2V6z"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0v2H7a1 1 110 2h2v2a1 1 0 110 2h2a1 1 0 110-2v-2h2a1 1 0 110-2h-2V6z"
                     clip-rule="evenodd"></path>
             </svg>
             <div>
@@ -74,17 +76,14 @@
 
         <!-- API Key Info and Input -->
         <div class="p-4 bg-gray-50 info-box">
-            <p class="text-sm">
-                If the chatbot is not working, you can manually enter your own Gemini API key below.
-                You can get one for free from <a href="https://aistudio.google.com/app/apikey" target="_blank"
-                    class="underline font-bold text-indigo-700">Google AI Studio</a>.
-            </p>
             <div class="mt-2 flex gap-2">
+                <!-- The API key is now pre-filled with the provided value -->
                 <input type="text" id="manual-api-key" placeholder="Paste your API key here..."
-                    class="flex-1 border-2 border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors">
+                    class="flex-1 border-2 border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                    value="AIzaSyCH8Gugw4MDfTOUlfw-qs0bAO0X1PHQxEU">
                 <button id="save-key-button"
                     class="bg-indigo-600 text-white rounded-full p-2 text-sm px-4 hover:bg-indigo-700 transition-colors">
-                    Save Key
+                    activate chatbot
                 </button>
             </div>
         </div>
@@ -130,8 +129,6 @@
             </button>
         </form>
     </div>
-
-    <script src =google4099f79ab677e872 (3).html></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const chatForm = document.getElementById('chat-form');
@@ -142,8 +139,9 @@
             const manualApiKeyInput = document.getElementById('manual-api-key');
             const saveKeyButton = document.getElementById('save-key-button');
 
-            let userApiKey = ""; // This will store the manual key
-
+            // The API key is defined here. It's pre-filled with the provided key.
+            let userApiKey = manualApiKeyInput.value.trim(); 
+            
             // The chat history is maintained here to keep the conversation context
             let chatHistoryArray = [{
                 role: "user",
@@ -195,14 +193,14 @@
 
             // Function to make the API call and handle the response
             const getBotResponse = async (userPrompt) => {
-                const providedApiKey = userApiKey || "";
+                const providedApiKey = userApiKey; // Use the key from the variable
 
                 // If there's no API key available, show an error and return.
                 if (!providedApiKey) {
                     appendMessage("Error: No API key found. Please enter one above or ensure the Canvas environment is providing it.", 'bot');
                     return;
                 }
-
+                
                 // This line constructs the API URL with the key.
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${providedApiKey}`;
 
@@ -268,7 +266,8 @@
                 const key = manualApiKeyInput.value.trim();
                 if (key) {
                     userApiKey = key;
-                    appendMessage("API key has been saved. You can now start chatting!", 'bot');
+                    // Updated the confirmation message to be more relevant to "activate chatbot"
+                    appendMessage("Chatbot is now activated! You can start chatting.", 'bot');
                 } else {
                     appendMessage("Please enter a valid API key.", 'bot');
                 }
