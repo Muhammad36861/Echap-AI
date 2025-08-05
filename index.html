@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pakola AI</title>
+    <!-- Use Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the chatbot UI */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Keyframe animations for a smooth feel */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Bounce animations for the loading indicator */
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+
+        .animate-bounce2 {
+            animation: bounce 1s infinite 0.2s;
+        }
+
+        .animate-bounce3 {
+            animation: bounce 1s infinite 0.4s;
+        }
+
+        /* Style for the info box to be easily visible */
+        .info-box {
+            background-color: #e0f2fe; /* Light blue */
+            border-left: 4px solid #0284c7; /* Darker blue border */
+            color: #0c4a6e;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="flex flex-col w-full max-w-2xl h-[90vh] bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Chatbot Header -->
+        <header class="bg-indigo-600 text-white p-4 flex items-center shadow-md">
+            <!-- Chatbot avatar as an inline SVG -->
+            <svg class="w-10 h-10 mr-4 text-white" fill="currentColor" viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 11-2 0v2H7a1 1 110 2h2v2a1 1 110 2h2a1 1 110-2v-2h2a1 1 110-2h-2V6z"
+                    clip-rule="evenodd"></path>
+            </svg>
+            <div>
+                <h1 class="text-xl font-semibold">Pakola AI</h1>
+                <p class="text-sm text-indigo-200">Online and ready to help</p>
+            </div>
+        </header>
+
+        <!-- API Key Info and Input -->
+        <div class="p-4 bg-gray-50 info-box">
+            <p class="text-sm">
+                If the chatbot is not working, you can manually enter your own Gemini API key below.
+                You can get one for free from <a href="https://aistudio.google.com/app/apikey" target="_blank"
+                    class="underline font-bold text-indigo-700">Google AI Studio</a>.
+            </p>
+            <div class="mt-2 flex gap-2">
+                <input type="text" id="manual-api-key" placeholder="Paste your API key here..."
+                    class="flex-1 border-2 border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors">
+                <button id="save-key-button"
+                    class="bg-indigo-600 text-white rounded-full p-2 text-sm px-4 hover:bg-indigo-700 transition-colors">
+                    Save Key
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat History -->
+        <main id="chat-history" class="flex-1 p-4 overflow-y-auto space-y-4">
+            <!-- Initial bot message -->
+            <div class="flex items-start space-x-3">
+                <img src="https://placehold.co/40x40/6366F1/FFFFFF?text=P" alt="Bot Avatar"
+                    class="rounded-full flex-shrink-0">
+                <div
+                    class="bg-gray-200 text-gray-800 rounded-lg p-3 max-w-xs md:max-w-md shadow-sm animate-fade-in-up">
+                    <p class="font-bold">Hello!</p>
+                    <p>I'm a friendly chatbot, and I'm ready to answer your questions. How can I help you today?</p>
+                </div>
+            </div>
+            <!-- Messages will be added here dynamically -->
+        </main>
+
+        <!-- Loading indicator -->
+        <div id="loading-indicator" class="p-4 text-center text-gray-500 hidden">
+            <div class="flex items-center justify-center">
+                <div class="w-4 h-4 rounded-full bg-indigo-500 animate-bounce"></div>
+                <div class="w-4 h-4 rounded-full bg-indigo-500 mx-2 animate-bounce2"></div>
+                <div class="w-4 h-4 rounded-full bg-indigo-500 animate-bounce3"></div>
+            </div>
+            <p class="mt-2 text-sm">Thinking...</p>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form id="chat-form" class="p-4 bg-gray-100 border-t border-gray-200 flex items-center gap-2">
+            <input type="text" id="user-input" placeholder="Ask me anything..."
+                class="flex-1 border-2 border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-indigo-500 transition-colors"
+                autocomplete="off">
+            <button type="submit" id="send-button"
+                class="bg-indigo-600 text-white rounded-full p-3 hover:bg-indigo-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                <!-- Send icon as an inline SVG -->
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.608-.246a1 1 0 00.58-1.248L7.693 9.497l4.572-1.923c.31-.132.584-.04.704.256l1.245 3.033a1 1 0 00.803.541h.001c.277 0 .54-.183.649-.44l.608-.246a1 1 0 00.28-1.409l-7-14z">
+                    </path>
+                </svg>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatForm = document.getElementById('chat-form');
+            const userInput = document.getElementById('user-input');
+            const chatHistory = document.getElementById('chat-history');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const sendButton = document.getElementById('send-button');
+            const manualApiKeyInput = document.getElementById('manual-api-key');
+            const saveKeyButton = document.getElementById('save-key-button');
+
+            let userApiKey = ""; // This will store the manual key
+
+            // The chat history is maintained here to keep the conversation context
+            let chatHistoryArray = [{
+                role: "user",
+                parts: [{
+                    text: "You are a friendly and knowledgeable chatbot named Pakola AI. Respond to my questions in a helpful and conversational manner. Do not mention that you are an AI or language model."
+                }]
+            }, ];
+
+            // Function to add a new message to the chat history UI
+            const appendMessage = (text, sender) => {
+                const messageContainer = document.createElement('div');
+                messageContainer.className = `flex items-start space-x-3 ${sender === 'user' ? 'justify-end' : ''}`;
+
+                const avatar = document.createElement('img');
+                avatar.className = 'rounded-full flex-shrink-0';
+                avatar.src = sender === 'user' ? 'https://placehold.co/40x40/A5B4FC/3730A3?text=U' : 'https://placehold.co/40x40/6366F1/FFFFFF?text=P';
+                avatar.alt = sender === 'user' ? 'User Avatar' : 'Bot Avatar';
+
+                const messageBubble = document.createElement('div');
+                messageBubble.className = `rounded-lg p-3 max-w-xs md:max-w-md shadow-sm animate-fade-in-up ${
+                    sender === 'user' ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-800'
+                }`;
+                messageBubble.innerHTML = `<p>${text}</p>`;
+
+                if (sender === 'user') {
+                    messageContainer.appendChild(messageBubble);
+                    messageContainer.appendChild(avatar);
+                } else {
+                    messageContainer.appendChild(avatar);
+                    messageContainer.appendChild(messageBubble);
+                }
+
+                chatHistory.appendChild(messageContainer);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            };
+
+            // Function to toggle the UI state (e.g., disable input, show loading indicator)
+            const toggleUIState = (isLoading) => {
+                userInput.disabled = isLoading;
+                sendButton.disabled = isLoading;
+                if (isLoading) {
+                    loadingIndicator.classList.remove('hidden');
+                    sendButton.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    loadingIndicator.classList.add('hidden');
+                    sendButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            };
+
+            // Function to make the API call and handle the response
+            const getBotResponse = async (userPrompt) => {
+                const providedApiKey = userApiKey || "";
+
+                // If there's no API key available, show an error and return.
+                if (!providedApiKey) {
+                    appendMessage("Error: No API key found. Please enter one above or ensure the Canvas environment is providing it.", 'bot');
+                    return;
+                }
+
+                // This line constructs the API URL with the key.
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${providedApiKey}`;
+
+                chatHistoryArray.push({
+                    role: "user",
+                    parts: [{
+                        text: userPrompt
+                    }]
+                });
+
+                const payload = {
+                    contents: chatHistoryArray
+                };
+
+                toggleUIState(true); // Disable UI at the start of the request
+
+                try {
+                    let response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    // Check for network errors or bad responses
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('API call failed:', response.status, response.statusText, errorText);
+                        // A more user-friendly error message
+                        appendMessage(`Error: Unable to connect to the Gemini API. Status: ${response.status}. It's possible the API key is invalid or your network has a problem.`, 'bot');
+                        return;
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const botText = result.candidates[0].content.parts[0].text;
+                        chatHistoryArray.push({
+                            role: "model",
+                            parts: [{
+                                text: botText
+                            }]
+                        });
+                        appendMessage(botText, 'bot');
+                    } else {
+                        console.error('Unexpected API response structure:', result);
+                        appendMessage("Sorry, I couldn't get a response. Please try again.", 'bot');
+                    }
+                } catch (error) {
+                    // Catch network-related errors
+                    console.error('Network or fetch error:', error);
+                    appendMessage("Oops! I'm having a little trouble right now. Please check your network connection and try again.", 'bot');
+                } finally {
+                    toggleUIState(false); // Always re-enable the UI and hide the loading indicator
+                }
+            };
+
+            // Event listener for the Save Key button
+            saveKeyButton.addEventListener('click', () => {
+                const key = manualApiKeyInput.value.trim();
+                if (key) {
+                    userApiKey = key;
+                    appendMessage("API key has been saved. You can now start chatting!", 'bot');
+                } else {
+                    appendMessage("Please enter a valid API key.", 'bot');
+                }
+            });
+
+            // Event listener for the form submission
+            chatForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevent page reload
+                const userMessage = userInput.value.trim();
+
+                if (userMessage) {
+                    appendMessage(userMessage, 'user');
+                    userInput.value = '';
+                    await getBotResponse(userMessage);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
