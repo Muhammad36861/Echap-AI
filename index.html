@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +13,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
+            color: #d1d5db;
+            /* Light gray text for the body */
         }
 
         /* Keyframe animations for a smooth feel */
@@ -48,35 +49,31 @@
 
         /* Style for the info box to be easily visible */
         .info-box {
-            background-color: #e0f2fe;
-            /* Light blue */
-            border-left: 4px solid #0284c7;
-            /* Darker blue border */
-            color: #0c4a6e;
+            background-color: #3b82f6;
+            /* A clear, visible blue for the info box */
+            border-left: 4px solid #1e40af;
+            /* A darker blue border */
+            color: #dbeafe;
+            /* Light text for contrast */
         }
     </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-    <div class="flex flex-col w-full max-w-2xl h-[90vh] bg-white rounded-xl shadow-lg overflow-hidden">
-        <header class="bg-indigo-600 text-white p-4 flex items-center shadow-md">
-            <svg class="w-10 h-10 mr-4 text-white" fill="currentColor" viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0v2H7a1 1 110 2h2v2a1 1 0 110 2h2a1 1 0 110-2v-2h2a1 1 0 110-2h-2V6z"
-                    clip-rule="evenodd"></path>
-            </svg>
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+    <div class="flex flex-col w-full max-w-2xl h-[90vh] bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <header class="bg-gray-800 text-white p-4 flex items-center shadow-md">
+            <img src="Gemini_Generated_Image_ns59jtns59jtns59.png" alt="Echap AI logo" class="h-10 mr-4">
             <div>
                 <h1 class="text-xl font-semibold">Echap AI</h1>
-                <p class="text-sm text-indigo-200">Online and ready to help</p>
+                <p class="text-sm text-gray-400">Online and ready to help</p>
             </div>
         </header>
 
-        <div class="p-4 bg-gray-50 info-box">
+        <div class="p-4 info-box">
             <div class="mt-2 flex gap-2">
                 <input type="text" id="manual-api-key" placeholder="Paste your API key here..."
-                    class="flex-1 border-2 border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
-                    value="AIzaSyCH8Gugw4MDfTOUlfw-qs0bAO0X1PHQxEU">
+                    value="AIzaSyB848ZaH-QadU9ZjIXvOoOB7r5Pek1jDz4"
+                    class="flex-1 border-2 border-gray-600 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors bg-gray-700 text-white">
                 <button id="save-key-button"
                     class="bg-indigo-600 text-white rounded-full p-2 text-sm px-4 hover:bg-indigo-700 transition-colors">
                     activate chatbot
@@ -89,14 +86,14 @@
                 <img src="https://placehold.co/40x40/6366F1/FFFFFF?text=E" alt="Bot Avatar"
                     class="rounded-full flex-shrink-0">
                 <div
-                    class="bg-gray-200 text-gray-800 rounded-lg p-3 max-w-xs md:max-w-md shadow-sm animate-fade-in-up">
+                    class="bg-gray-700 text-gray-200 rounded-lg p-3 max-w-xs md:max-w-md shadow-sm animate-fade-in-up">
                     <p class="font-bold">Hello!</p>
                     <p>I'm a friendly chatbot, and I'm ready to answer your questions. How can I help you today?</p>
                 </div>
             </div>
-            </main>
+        </main>
 
-        <div id="loading-indicator" class="p-4 text-center text-gray-500 hidden">
+        <div id="loading-indicator" class="p-4 text-center text-gray-400 hidden">
             <div class="flex items-center justify-center">
                 <div class="w-4 h-4 rounded-full bg-indigo-500 animate-bounce"></div>
                 <div class="w-4 h-4 rounded-full bg-indigo-500 mx-2 animate-bounce2"></div>
@@ -105,9 +102,9 @@
             <p class="mt-2 text-sm">Thinking...</p>
         </div>
 
-        <form id="chat-form" class="p-4 bg-gray-100 border-t border-gray-200 flex items-center gap-2">
+        <form id="chat-form" class="p-4 bg-gray-900 border-t border-gray-700 flex items-center gap-2">
             <input type="text" id="user-input" placeholder="Ask me anything..."
-                class="flex-1 border-2 border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-indigo-500 transition-colors"
+                class="flex-1 border-2 border-gray-600 bg-gray-700 text-white rounded-full px-4 py-2 focus:outline-none focus:border-indigo-500 transition-colors"
                 autocomplete="off">
             <button type="submit" id="send-button"
                 class="bg-indigo-600 text-white rounded-full p-3 hover:bg-indigo-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
@@ -129,9 +126,9 @@
             const manualApiKeyInput = document.getElementById('manual-api-key');
             const saveKeyButton = document.getElementById('save-key-button');
 
-            // The API key is defined here. It's pre-filled with the provided key.
+            // The API key is now loaded from the pre-filled input field.
             let userApiKey = manualApiKeyInput.value.trim();
-            
+
             // The chat history is maintained here to keep the conversation context
             let chatHistoryArray = [{
                 role: "user",
@@ -152,8 +149,8 @@
 
                 const messageBubble = document.createElement('div');
                 messageBubble.className = `rounded-lg p-3 max-w-xs md:max-w-md shadow-sm animate-fade-in-up ${
-                    sender === 'user' ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-800'
-                }`;
+					sender === 'user' ? 'bg-indigo-500 text-white' : 'bg-gray-700 text-gray-200'
+				}`;
                 messageBubble.innerHTML = `<p>${text}</p>`;
 
                 if (sender === 'user') {
@@ -190,7 +187,7 @@
                     appendMessage("Error: No API key found. Please enter one above or ensure the Canvas environment is providing it.", 'bot');
                     return;
                 }
-                
+
                 // This line constructs the API URL with the key.
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${providedApiKey}`;
 
