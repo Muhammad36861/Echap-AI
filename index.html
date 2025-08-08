@@ -69,18 +69,6 @@
             </div>
         </header>
 
-        <div class="p-4 info-box">
-            <div class="mt-2 flex gap-2">
-                <input type="text" id="manual-api-key" placeholder="Paste your API key here..."
-                    value="AIzaSyB848ZaH-QadU9ZjIXvOoOB7r5Pek1jDz4"
-                    class="flex-1 border-2 border-gray-600 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition-colors bg-gray-700 text-white">
-                <button id="save-key-button"
-                    class="bg-indigo-600 text-white rounded-full p-2 text-sm px-4 hover:bg-indigo-700 transition-colors">
-                    activate chatbot
-                </button>
-            </div>
-        </div>
-
         <main id="chat-history" class="flex-1 p-4 overflow-y-auto space-y-4">
             <div class="flex items-start space-x-3">
                 <img src="https://placehold.co/40x40/6366F1/FFFFFF?text=E" alt="Bot Avatar"
@@ -123,11 +111,9 @@
             const chatHistory = document.getElementById('chat-history');
             const loadingIndicator = document.getElementById('loading-indicator');
             const sendButton = document.getElementById('send-button');
-            const manualApiKeyInput = document.getElementById('manual-api-key');
-            const saveKeyButton = document.getElementById('save-key-button');
 
-            // The API key is now loaded from the pre-filled input field.
-            let userApiKey = manualApiKeyInput.value.trim();
+            // The API key is now hardcoded directly.
+            const userApiKey = "AIzaSyB848ZaH-QadU9ZjIXvOoOB7r5Pek1jDz4";
 
             // The chat history is maintained here to keep the conversation context
             let chatHistoryArray = [{
@@ -135,7 +121,7 @@
                 parts: [{
                     text: "You are a friendly and knowledgeable chatbot named Echap AI. Respond to my questions in a helpful and conversational manner. Do not mention that you are an AI or language model."
                 }]
-            }, ];
+            }];
 
             // Function to add a new message to the chat history UI
             const appendMessage = (text, sender) => {
@@ -149,8 +135,8 @@
 
                 const messageBubble = document.createElement('div');
                 messageBubble.className = `rounded-lg p-3 max-w-xs md:max-w-md shadow-sm animate-fade-in-up ${
-					sender === 'user' ? 'bg-indigo-500 text-white' : 'bg-gray-700 text-gray-200'
-				}`;
+                    sender === 'user' ? 'bg-indigo-500 text-white' : 'bg-gray-700 text-gray-200'
+                }`;
                 messageBubble.innerHTML = `<p>${text}</p>`;
 
                 if (sender === 'user') {
@@ -247,18 +233,6 @@
                     toggleUIState(false); // Always re-enable the UI and hide the loading indicator
                 }
             };
-
-            // Event listener for the Save Key button
-            saveKeyButton.addEventListener('click', () => {
-                const key = manualApiKeyInput.value.trim();
-                if (key) {
-                    userApiKey = key;
-                    // Updated the confirmation message to be more relevant to "activate chatbot"
-                    appendMessage("Chatbot is now activated! You can start chatting.", 'bot');
-                } else {
-                    appendMessage("Please enter a valid API key.", 'bot');
-                }
-            });
 
             // Event listener for the form submission
             chatForm.addEventListener('submit', async (event) => {
